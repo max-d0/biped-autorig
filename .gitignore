@@ -1,0 +1,11 @@
+# Ignore Maya ASCII files
+*.ma
+
+# Ignore Maya Binary files
+*.mb
+
+# Ignore influence files
+*.infs
+
+# Ignore XML files
+*.xml
