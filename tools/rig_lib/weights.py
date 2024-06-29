@@ -36,7 +36,7 @@ def saveSkinWeights( geoObject, weightsFolder ):
     
     weightsFilename = geoObject + weightsFileExt
     mc.deformerWeights ( weightsFilename, path = weightsFolder, export = True, deformer = geoSkinClusterNode )
-    
+ 
     # save influences file
     influences = mc.skinCluster( geoSkinClusterNode, q = True, inf = True )
     

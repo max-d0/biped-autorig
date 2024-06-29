@@ -9,6 +9,7 @@ import maya.cmds as mc
 from rig_lib import main
 from rig_lib import weights
 from rig_lib import rig_spine
+from rig_lib import rig_head
 
 projectPath = r'X:\Work\mayascripts\biped_autorig\%s'
 
@@ -45,11 +46,11 @@ def setup( charName= '', rigScale= 1.0 ):
     # parent rig objects
     assetModelGrp = '%s_model_grp' % charName
     rootJnt = 'root_jnt'
-    spineRigGrp = 'spine_rig'
+    spineRigDrivers = 'spine_driver_jnts'
 
     mc.parent( assetModelGrp, baseGroupsData['modelGrp'] )
     mc.parent( rootJnt, baseGroupsData['jointsGrp'] )
-    mc.parent( spineRigGrp, baseGroupsData['jointsGrp'] )
+    mc.parent( spineRigDrivers, baseGroupsData['jointsGrp'] )
 
     """
     # temp binding of model
@@ -69,16 +70,34 @@ def controlsSetup( baseGroupsData, rigScale ):
     """
 
     spineJointsList = ['C_spineBase_jnt', 'C_spineA_jnt', 'C_spineB_jnt', 'C_spineC_jnt', 'C_chest_jnt']
+    ribbonJointsList = ['C_spineBase_driver_jnt', 'C_spineB_driver_jnt', 'C_spineC_driver_jnt']
 
     spineData = rig_spine.build(
                     spineJoints = spineJointsList,
+                    ribbonJoints = ribbonJointsList,
                     pelvisJnt = 'C_pelvis_jnt',
                     rootJnt = 'root_jnt',
                     prefix= 'spine',
                     ctrlScale = rigScale * 10
                     )
 
+    # parent main module group to controlsGrp
     mc.parent( spineData['moduleObjs']['mainGrp'], baseGroupsData['controlsGrp'] )
+
+    """
+    build control setup
+    """
+
+    neckJointsList = ['neck1_jnt', 'neck2_jnt', 'neck3_jnt']
+
+    headData = rig_head.build(
+        neckJoints = neckJointsList,
+        headJnt = 'headBase1_jnt',
+        prefix = 'head',
+        ctrlScale = 3
+    )
+
+    mc.parent( headData['moduleObjs']['mainGrp'], baseGroupsData['controlsGrp'] )
 
 def saveSkinWeights( charName, skinnedObjs ):
 

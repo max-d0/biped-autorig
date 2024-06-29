@@ -9,3 +9,6 @@
 
 # Ignore XML files
 *.xml
+
+# Ignore pycache files
+*.pyc

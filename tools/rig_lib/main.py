@@ -34,7 +34,7 @@ def baseGroups(charName = '', rigScale = 1.0, settingsCtrlRefObj = "headTop_jnt"
     # make settings control
     settingsCtrl = controls.make( prefix= 'settings', ctrlScale = rigScale * 5, ctrlShape= 'circleX', matchObject = settingsCtrlRefObj, parentObj= globalCtrl['c'] )
 
-    mc.move( 0, settingsCtrlOffset * 2, 0, settingsCtrl['off'], r = True )
+    mc.move( 0, settingsCtrlOffset * 4, 0, settingsCtrl['off'], r = True )
 
     # add settings attributes
     groupsVisAtList = ['jointsVis', 'modelVis', 'controlsVis']

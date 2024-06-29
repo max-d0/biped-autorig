@@ -20,7 +20,19 @@ def make( prefix, ctrlScale = 1.0, ctrlShape= '', matchObject= None, matchObject
 
         ctrl = circleY( curveScale = ctrlScale )
 
-    if ctrlShape == 'circleX':
+    elif ctrlShape == 'circleX':
+
+        ctrl = circleX( curveScale = ctrlScale )
+
+    elif ctrlShape == 'hips':
+
+        ctrl = hips( curveScale = ctrlScale )
+
+    elif ctrlShape == 'torso':
+
+        ctrl = torso( curveScale = ctrlScale )
+
+    else:
 
         ctrl = circleX( curveScale = ctrlScale )
 
@@ -83,6 +95,63 @@ def circleY( curveScale = 1.0 ):
     crv = mc.circle( normal=[0,1,0], ch=0, radius=curveScale * 0.5 )[0]
 
     return crv
+
+def hips( curveScale = 1.0 ):
+    
+    """
+    hips control shape
+    """
+
+    pos = []
+    pos.append( ( 0.391552, 0.000000, -0.363639 ) )
+    pos.append( ( 0.000000, 0.000000, -0.399801 ) )
+    pos.append( ( -0.391552, 0.000000, -0.363639 ) )
+    pos.append( ( -0.553738, 0.000000, 0.000000 ) )
+    pos.append( ( -0.391552, -0.188199, 0.351029 ) )
+    pos.append( ( -0.000000, -0.188199, 0.351031 ) )
+    pos.append( ( 0.391552, -0.188199, 0.351029 ) )
+    pos.append( ( 0.553738, -0.000000, 0.000000 ) )
+
+    # Create a circle with the correct number of CVs (degree + number of spans)
+    crv = mc.circle( d=3, s=len(pos), nr=(0, 1, 0) )[0]
+
+    # Move CVs to match the position points
+    for i, p in enumerate(pos):
+        mc.xform( f"{crv}.cv[{i}]", ws = True, t = p )
+
+    # Scale the curve
+    mc.scale(curveScale, curveScale, curveScale, crv, r=True)
+    
+    return crv  
+
+def torso( curveScale = 1.0 ):
+    
+    """
+    hips control shape
+    """
+
+    pos = []
+    pos.append( ( 0.410046, 0.000000, -0.423599 ) )
+    pos.append( ( 0.000000, 0.000000, -0.423600 ) )
+    pos.append( ( -0.410046, 0.000000, -0.423599 ) )
+    pos.append( ( -0.566787, 0.000000, -0.054001 ) )
+    pos.append( ( -0.261162, -0.000000, 0.310277 ) )
+    pos.append( ( -0.000000, -0.000000, 0.436416 ) )
+    pos.append( ( 0.261162, -0.000000, 0.310277 ) )
+    pos.append( ( 0.566787, -0.000000, -0.054001 ) )
+
+    # Create a circle with the correct number of CVs (degree + number of spans)
+    crv = mc.circle( d=3, s=len(pos), nr=(0, 1, 0) )[0]
+
+    # Move CVs to match the position points
+    for i, p in enumerate(pos):
+        mc.xform( f"{crv}.cv[{i}]", ws = True, t = p )
+
+    # Scale the curve
+    mc.scale(curveScale, curveScale, curveScale, crv, r=True)
+    
+    return crv  
+
 
 
 """
