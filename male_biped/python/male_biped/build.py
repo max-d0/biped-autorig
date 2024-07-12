@@ -16,6 +16,7 @@ projectPath = r'X:\Work\mayascripts\biped_autorig\%s'
 modelPath = '%s\model\%s_model.ma'
 skeletonPath = '%s\skeleton\%s_skeleton.ma'
 weightsPath = '%s\weights/'
+# faceShapesPath = ''
 
 
 def setup( charName= '', rigScale= 1.0 ):
@@ -52,11 +53,6 @@ def setup( charName= '', rigScale= 1.0 ):
     mc.parent( rootJnt, baseGroupsData['jointsGrp'] )
     mc.parent( spineRigDrivers, baseGroupsData['jointsGrp'] )
 
-    """
-    # temp binding of model
-    mc.cluster( assetModelGrp, wn= [rootJnt, rootJnt], bs=True )
-    """
-
     # build controls setup
     controlsSetup( baseGroupsData, rigScale )
 
@@ -69,35 +65,67 @@ def controlsSetup( baseGroupsData, rigScale ):
     build control setup
     """
 
+    # spine controls
+
     spineJointsList = ['C_spineBase_jnt', 'C_spineA_jnt', 'C_spineB_jnt', 'C_spineC_jnt', 'C_chest_jnt']
     ribbonJointsList = ['C_spineBase_driver_jnt', 'C_spineB_driver_jnt', 'C_spineC_driver_jnt']
 
     spineData = rig_spine.build(
-                    spineJoints = spineJointsList,
-                    ribbonJoints = ribbonJointsList,
-                    pelvisJnt = 'C_pelvis_jnt',
-                    rootJnt = 'root_jnt',
-                    prefix= 'spine',
-                    ctrlScale = rigScale * 10
-                    )
+                                spineJoints = spineJointsList,
+                                ribbonJoints = ribbonJointsList,
+                                pelvisJnt = 'C_pelvis_jnt',
+                                rootJnt = 'root_jnt',
+                                prefix= 'spine',
+                                ctrlScale = rigScale * 10
+                                )
 
     # parent main module group to controlsGrp
     mc.parent( spineData['moduleObjs']['mainGrp'], baseGroupsData['controlsGrp'] )
 
-    """
-    build control setup
-    """
 
-    neckJointsList = ['neck1_jnt', 'neck2_jnt', 'neck3_jnt']
+    # head controls
 
+    neckJointsList = ['neck1_jnt', 'neck2_jnt', 'neck3_jnt', 'headBase1_jnt']
+    
     headData = rig_head.build(
-        neckJoints = neckJointsList,
-        headJnt = 'headBase1_jnt',
-        prefix = 'head',
-        ctrlScale = 3
-    )
+                            neckJoints = neckJointsList,
+                            ctrlScale = 3
+                            )
 
     mc.parent( headData['moduleObjs']['mainGrp'], baseGroupsData['controlsGrp'] )
+    mc.parentConstraint( spineJointsList[-1], headData['baseGrp'], mo = True )
+    mc.parentConstraint( spineData['bodyCtrl']['c'], headData['headOrientGrp'], mo = True )
+
+
+    """
+    #face controls
+
+    # import face shapes
+    mainProjectPath = projectPath % charName
+    faceShapesPathFile = faceShapesPath % ( mainProjectPath, charName )
+    mc.file( faceShapesPathFile, i = True )
+    
+    # setup face shapes
+    faceShapesGeo = 'faceShapes_geo'
+    bodyGeo = 'body_geo'
+    mc.parent( faceShapesGeo, headData['moduleObjs']['partsStaticGrp'] )
+    mc.blendShape( faceShapesGeo, bodyGeo, w = [0, 1] )
+    faceShapesGeoHis = mc.listHistory( faceShapesGeo )
+    faceShapesBls = mc.ls( faceShapesGeoHis, type = 'blendShape' )[0]
+    
+    targetIndeces = mc.getAttr( faceShapesBls + '.weight', mi = 1 )
+    bsShapeNames = [ mc.aliasAttr( '%s.weight[%d]' % ( faceShapesBls, i ), q = 1 ) for i in targetIndeces ]
+    
+    faceSeparatorAt = 'faceShapes'
+    mc.addAttr( headData['headCtrl']['c'], ln = faceSeparatorAt, at = 'enum', enumName = '__________', k = 0 )
+    mc.setAttr( headData['headCtrl']['c'] + '.' + faceSeparatorAt, cb = 1, l = 1 )
+    
+    for shapeName in bsShapeNames:
+        
+        mc.addAttr( headData['headCtrl']['c'], ln = shapeName, k = True, min = -1, max = 1 )
+        mc.connectAttr( headData['headCtrl']['c'] + '.' + shapeName, faceShapesBls + '.' + shapeName )
+    """
+
 
 def saveSkinWeights( charName, skinnedObjs ):
 
@@ -128,7 +156,6 @@ def loadSkinWeights( charName, modelGrp ):
     for geo in modelGeos:
 
         weights.loadSkinWeights( geo, weightsFolder )
-
 
 
 

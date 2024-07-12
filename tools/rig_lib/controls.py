@@ -24,6 +24,10 @@ def make( prefix, ctrlScale = 1.0, ctrlShape= '', matchObject= None, matchObject
 
         ctrl = circleX( curveScale = ctrlScale )
 
+    elif ctrlShape == 'circleZ':
+
+        ctrl = circleZ( curveScale = ctrlScale )
+
     elif ctrlShape == 'hips':
 
         ctrl = hips( curveScale = ctrlScale )
@@ -32,9 +36,14 @@ def make( prefix, ctrlScale = 1.0, ctrlShape= '', matchObject= None, matchObject
 
         ctrl = torso( curveScale = ctrlScale )
 
+    elif ctrlShape == 'head':
+
+        ctrl = head( curveScale = ctrlScale )
+
     else:
 
         ctrl = circleX( curveScale = ctrlScale )
+
 
     # rename control
     ctrl = mc.rename( ctrl, prefix + '_ctl' )
@@ -84,6 +93,8 @@ def make( prefix, ctrlScale = 1.0, ctrlShape= '', matchObject= None, matchObject
         }
 
 
+# control shapes
+
 def circleX( curveScale = 1.0 ):
 
     crv = mc.circle( normal=[1,0,0], ch=0, radius=curveScale * 0.5 )[0]
@@ -93,6 +104,23 @@ def circleX( curveScale = 1.0 ):
 def circleY( curveScale = 1.0 ):
 
     crv = mc.circle( normal=[0,1,0], ch=0, radius=curveScale * 0.5 )[0]
+
+    return crv
+
+def circleZ( curveScale = 1.0 ):
+
+    crv = mc.circle( normal=[0,0,1], ch=0, radius=curveScale * 0.5 )[0]
+
+    return crv
+
+def head( curveScale = 1.0 ):
+
+    crv = mc.circle( normal=[0,1,0], ch=0, radius=curveScale * 0.5 )[0]
+
+    mc.setAttr(crv + '.scaleX', 0.85)
+    mc.setAttr(crv + '.scaleZ', 1.035)
+
+    mc.makeIdentity(crv, apply=True, scale=True)
 
     return crv
 
@@ -153,18 +181,6 @@ def torso( curveScale = 1.0 ):
     return crv  
 
 
-
-"""
-def shape( curveScale = 1.0 ):
-    
-    crv = mc.circle(radius=.5, normal=(0, 1, 0), constructionHistory=False)
-
-    clsDf, clsHdl = mc.cluster( crv )
-    mc.setAttr( clsHdl + '.s', curveScale, curveScale, curveScale )
-    mc.delete( crv, ch=True )
-
-    return crv
-"""
 
 def printCvPositions( curveObj ):
 

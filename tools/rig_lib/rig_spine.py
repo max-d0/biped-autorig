@@ -100,7 +100,8 @@ def build(
 
 
     return{
-        'moduleObjs':moduleObjs
+        'moduleObjs':moduleObjs,
+        'bodyCtrl':bodyCtrl
         }
 
 
